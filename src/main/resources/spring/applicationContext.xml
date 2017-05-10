@@ -16,6 +16,40 @@
     <!--注解驱动-->
     <mvc:annotation-driven/>
 
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
+    <bean id="mappingJackson2HttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--静态资源映射-->
+    <mvc:resources mapping="/css/**" location="/WEB-INF/static/css/"/>
+    <mvc:resources mapping="/image/**" location="/WEB-INF/static/image/"/>
+    <mvc:resources mapping="/js/**" location="/WEB-INF/static/js/"/>
+
+    <!--视图解析器-->
+    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+        <!--<property name="order" value="2"/>-->
+    </bean>
+
+    <!-- springmvc文件上传需要配置的节点-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10485760"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="resolveLazily" value="true"/>
+    </bean>
+
+
+    <!--       - - - - - - - - - - - - - - - - - - - -         -->
+    <!--spring- mybatis配置-->
+
     <!-- 引入配置文件 -->
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -52,28 +86,9 @@
     </bean>
     <!--配置扫描Dao接口包,动态实现DAO接口,注入到spring容器-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <!--注入SqlSessionFactory-->
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <!-- 给出需要扫描的Dao接口-->
         <property name="basePackage" value="com.myweb.dao"/>
-    </bean>
-
-    <!--静态资源映射-->
-    <mvc:resources mapping="/css/**" location="/WEB-INF/static/css/"/>
-    <mvc:resources mapping="/image/**" location="/WEB-INF/static/image/"/>
-    <mvc:resources mapping="/js/**" location="/WEB-INF/static/js/"/>
-
-    <!--视图解析器-->
-    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
-        <property name="prefix" value="/WEB-INF/views/"/>
-        <property name="suffix" value=".jsp"/>
-        <!--<property name="order" value="2"/>-->
-    </bean>
-
-    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.test.dao"/>
+        <!--注入SqlSessionFactory-->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
@@ -81,12 +96,5 @@
     <bean id="transactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
-    </bean>
-
-    <!-- springmvc文件上传需要配置的节点-->
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="10485760"/>
-        <property name="defaultEncoding" value="UTF-8"/>
-        <property name="resolveLazily" value="true"/>
     </bean>
 </beans>
